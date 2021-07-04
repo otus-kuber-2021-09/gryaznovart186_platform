@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: frontend
+  name: frontend
+spec:
+  containers:
+  - image: gryaznovart186/hipster_shop_frontend
+    name: frontend
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never

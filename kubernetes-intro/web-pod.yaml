@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+  labels:
+    name: web
+spec:
+  containers:
+  - name: web
+    image: gryaznovart186/nginx-otus-hw1
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 8000
+    volumeMounts:
+      - mountPath: /app
+        name: web
+  initContainers:
+  - name: init
+    image: busybox:1.33.1
+    command: ['sh', '-c', 'wget -O- https://tinyurl.com/otus-k8s-intro | sh']
+    volumeMounts:
+      - mountPath: /app
+        name: web
+  volumes:
+    - name: web
+      emptyDir: {}
+  securityContext:
+    runAsUser: 1001
