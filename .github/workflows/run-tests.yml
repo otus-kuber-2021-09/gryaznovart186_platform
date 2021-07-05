@@ -5,7 +5,7 @@ on:
     branches: kubernetes-*
   pull_request:
     branches: kubernetes-*
-
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest
