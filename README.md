@@ -5,7 +5,7 @@ gryaznovart186 Platform repository
 
 ### HW 1 kubernetes-intro
 0) За работой coredns следит `Replication Controller` компонента `kube-controller-manager`. За работой `api-server` следит `kubelet` на мастер ноде k8s
-1) Для запуска nginx под определенным пользователем необходимо в Dockerfile добавить создание нужного пользователя. Выдать права на директории `/var/cache/nginx` `/run` `/var/log/nginx`. И указать небходимого пользователя в USER Dockerfile'a.
+1) Для запуска nginx под определенным пользователем необходимо в манифесте пода добавить в `securityContext` строку runAsUser: 1001 и примонтировать дириктории `/var/log/nginx` `/var/cache/nginx` `/run` как emptyDir, что бы были права на запись у пользователя 1001
 Для того что бы nginx отдавал страницы из директории /app и слушал 8000 порт необходимо в Dockerfile копировать конфиг:
 ```
 server {
