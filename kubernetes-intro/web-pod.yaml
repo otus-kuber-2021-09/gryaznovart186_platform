@@ -17,6 +17,12 @@ spec:
     volumeMounts:
       - mountPath: /app
         name: web
+      - mountPath: /var/cache/nginx
+        name: cache
+      - mountPath: /run
+        name: pid
+      - mountPath: /var/log/nginx
+        name: logs
   initContainers:
   - name: init
     image: busybox:1.33.1
@@ -26,6 +32,12 @@ spec:
         name: web
   volumes:
     - name: web
+      emptyDir: {}
+    - name: logs
+      emptyDir: {}
+    - name: cache
+      emptyDir: {}
+    - name: pid
       emptyDir: {}
   securityContext:
     runAsUser: 1001
