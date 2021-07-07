@@ -61,6 +61,7 @@ spec:
       maxUnavailable: 1
 ```
 По пунктам 1 и 2 написаны манифесты `paymentservice-deployment-bg.yaml` и `paymentservice-deployment-reverse.yaml`
+
 3. Что бы DaemonSet'ы запускались на всех нодах необходимо в манифест добавить секцию с `tolerations` которая обойдет какие либо запреты на размещения подов `taints`
 ```yaml
 spec:
