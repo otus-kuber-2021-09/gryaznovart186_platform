@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paymentservice-bg
+  labels:
+    app: paymentservice-bg
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0%
+  replicas: 5
+  selector:
+    matchLabels:
+      app: paymentservice-bg
+  template:
+    metadata:
+      labels:
+        app: paymentservice-bg
+    spec:
+      containers:
+        - name: paymentservice
+          image: gryaznovart186/hipster_shop_payment:0.0.1
