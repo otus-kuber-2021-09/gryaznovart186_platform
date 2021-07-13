@@ -4,7 +4,7 @@ metadata:
   name: carol-pod-viewer
 subjects:
 - kind: User
-  name: system:serviceaccount:dev
+  name: system:serviceaccount
   namespace: prometheus
 roleRef:
   kind: ClusterRole
