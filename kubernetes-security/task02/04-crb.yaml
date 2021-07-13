@@ -3,8 +3,8 @@ kind: ClusterRoleBinding
 metadata:
   name: carol-pod-viewer
 subjects:
-- kind: ServiceAccount
-  name: carol
+- kind: User
+  name: system:serviceaccount:dev
   namespace: prometheus
 roleRef:
   kind: ClusterRole
