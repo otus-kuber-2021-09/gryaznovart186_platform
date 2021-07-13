@@ -71,3 +71,80 @@ spec:
     effect: NoSchedule
   containers:
 ```
+### HW 3 kubernetes-security
+Создание неймспейса:
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: <namespace_name>
+
+```
+Cоздание сервис аккаунта:
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: <sa_name>
+  namespace: <ns(optional)>
+
+```
+Создание кластерной роли:
+```yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: view-all-pods
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+```
+Создание кластероного роль биндинга:
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: carol-pod-viewer
+subjects:
+- kind: ServiceAccount
+  name: carol
+  namespace: prometheus
+roleRef:
+  kind: ClusterRole
+  name: view-all-pods
+  apiGroup: rbac.authorization.k8s.io
+```
+Создание роли:
+```yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mynamespace-user-full-access
+  namespace: mynamespace
+rules:
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["batch"]
+  resources:
+  - jobs
+  - cronjobs
+  verbs: ["*"]
+```
+Создание биндинга роли:
+```yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mynamespace-user-view
+  namespace: mynamespace
+subjects:
+- kind: ServiceAccount
+  name: mynamespace-user
+  namespace: mynamespace
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mynamespace-user-full-access
+```
