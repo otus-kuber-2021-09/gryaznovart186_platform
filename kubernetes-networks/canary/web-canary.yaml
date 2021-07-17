@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: canary
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 100%
+  template:
+    metadata:
+      labels:
+        app: canary
+    spec:
+      containers:
+        - name: canary
+          image: gryaznovart186/nginx-otus-hw1
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "75m"
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: 8000
+          livenessProbe:
+            tcpSocket:
+              port: 8000
+          volumeMounts:
+            - mountPath: /app
+              name: web
+            - mountPath: /var/cache/nginx
+              name: cache
+            - mountPath: /run
+              name: pid
+            - mountPath: /var/log/nginx
+              name: logs
+      initContainers:
+      - name: init
+        image: busybox:1.33.1
+        command: ['sh', '-c', 'wget -O- https://tinyurl.com/otus-k8s-intro | sh']
+        volumeMounts:
+          - mountPath: /app
+            name: web
+      volumes:
+        - name: web
+          emptyDir: {}
+        - name: logs
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+        - name: pid
+          emptyDir: {}
+      securityContext:
+        runAsUser: 1001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: canary
+spec:
+  selector:
+    app: canary
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "50"
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: canary
+            port:
+              number: 8000
+    host: canary.example
