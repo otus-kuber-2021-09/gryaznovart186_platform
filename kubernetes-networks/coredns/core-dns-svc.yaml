@@ -13,7 +13,7 @@ spec:
   - port: 53
     protocol: UDP
     targetPort: 53
-  loadBalancerIP: 172.17.255.2
+  loadBalancerIP: 172.17.255.10
 ---
 apiVersion: v1
 kind: Service
@@ -30,5 +30,5 @@ spec:
   - port: 53
     protocol: TCP
     targetPort: 53
-  loadBalancerIP: 172.17.255.2
+  loadBalancerIP: 172.17.255.10
 

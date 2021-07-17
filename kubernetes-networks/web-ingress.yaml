@@ -2,8 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: web
-  labels:
-    name: web
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -16,5 +14,5 @@ spec:
           service:
             name: web-svc
             port:
-              number: 80
+              number: 8000
 
