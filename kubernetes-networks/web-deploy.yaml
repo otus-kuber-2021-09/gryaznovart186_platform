@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 100%
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: gryaznovart186/nginx-otus-hw1
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: 8000
+          livenessProbe:
+            tcpSocket:
+              port: 8000
+          volumeMounts:
+            - mountPath: /app
+              name: web
+            - mountPath: /var/cache/nginx
+              name: cache
+            - mountPath: /run
+              name: pid
+            - mountPath: /var/log/nginx
+              name: logs
+      initContainers:
+      - name: init
+        image: busybox:1.33.1
+        command: ['sh', '-c', 'wget -O- https://tinyurl.com/otus-k8s-intro | sh']
+        volumeMounts:
+          - mountPath: /app
+            name: web
+      volumes:
+        - name: web
+          emptyDir: {}
+        - name: logs
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+        - name: pid
+          emptyDir: {}
+      securityContext:
+        runAsUser: 1001
