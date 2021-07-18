@@ -236,3 +236,16 @@ spec:
               number: 8000
     host: canary.example
 ```
+### HW 5 kubernetes-volumes
+Запущен sts с minio
+Креды вынесены в секрет
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio
+type: Opaque
+stringData:
+  accessKey: minio
+  secretKey: minio123
+```
