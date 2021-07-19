@@ -148,3 +148,104 @@ roleRef:
   kind: Role
   name: mynamespace-user-full-access
 ```
+
+### HW 4 kubernetes-networks
+Основыное задание сделано по методичке
+Задание со звездочкой
+1) Необходимо создать 2 сервиса для tcp и udp с одним задданым ип и разрешить шаринг ип через анатации металлб
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: core-dns-udp
+  namespace: kube-system
+  annotations:
+      metallb.universe.tf/allow-shared-ip: kube-dns
+spec:
+  selector:
+    k8s-app: kube-dns
+  type: LoadBalancer
+  ports:
+  - port: 53
+    protocol: UDP
+    targetPort: 53
+  loadBalancerIP: 172.17.255.10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: core-dns-tcp
+  namespace: kube-system
+  annotations:
+      metallb.universe.tf/allow-shared-ip: kube-dns
+spec:
+  selector:
+    k8s-app: kube-dns
+  type: LoadBalancer
+  ports:
+  - port: 53
+    protocol: TCP
+    targetPort: 53
+  loadBalancerIP: 172.17.255.10
+
+```
+2) Дашборд кубернетеса, разворачивается стандартным инресом с дополнительной анатацией `nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"`
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kube-dashboard
+  namespace: kubernetes-dashboard
+  labels:
+    name: kube-dashboard
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/dashboard"
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 443
+```
+3) Для канаречного релиза необходимо создать копию манифестов для разворачивания новой версии приложения и в инресс добавить несколько анатаций, также ингресс должен слушать конкретный хост
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "50"
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: canary
+            port:
+              number: 8000
+    host: canary.example
+```
+### HW 5 kubernetes-volumes
+Запущен sts с minio
+Креды вынесены в секрет
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio
+type: Opaque
+stringData:
+  accessKey: minio
+  secretKey: minio123
+```
