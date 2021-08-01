@@ -1,0 +1,6 @@
+# yc iam create-token (ya cli)
+ya_api_token = "some_token"
+# yc resource-manager cloud list ya cli)
+ya_cloud_id  = "some_cloud_id"
+# yc resource-manager folder list (ya cli)
+ya_folder_id = "some_folder_id"

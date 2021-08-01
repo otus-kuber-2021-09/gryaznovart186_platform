@@ -249,3 +249,66 @@ stringData:
   accessKey: minio
   secretKey: minio123
 ```
+### HW 6 templating
+Установка helm репозиториев и чартов
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+
+helm upgrade --install nginx-ingress stable/nginx-ingress \
+ --namespace=nginx-ingress \
+ --create-namespace \
+ --version=1.41.3
+
+helm upgrade --install cert-manager jetstack/cert-manager --wait \
+ --namespace=nginx-ingress \
+ --create-namespace \
+ --version=v1.4.1 \
+ --set installCRDs=true
+
+helm upgrade --install chartmuseum stable/chartmuseum --wait \
+ --namespace=chartmuseum \
+ --create-namespace \
+ --version=2.13.2 \
+ -f chartmuseum/values.yaml
+```
+Для корректоной работы cert manager необходимо создать ClusterIssuer!
+Для использования ChartMuseum необходимо включить использование api в values: `DISABLE_API: false`
+Запушить чарт с помощью curl: `curl --data-binary "@nginx-ingress-1.41.3.tgz" https://chartmuseum.84.252.130.171.nip.io/api/charts`
+Или через плагин для helm:
+```bash
+helm push nginx-ingress/ myrepo --force
+helm repo add myrepo https://chartmuseum.84.252.130.171.nip.io
+helm plugin install https://github.com/chartmuseum/helm-push.git
+```
+Запуск harbor:
+```bash
+helm repo add harbor https://helm.goharbor.io
+helm upgrade --install harbor harbor/harbor --wait \
+ --namespace=harbor \
+ --create-namespace \
+ --version=1.1.2 \
+ -f harbor/values.yaml
+```
+(*)В хельмфайле необходимо прописать репозитории и релизы далее его применить `helmfile apply`
+
+
+Для установки redis как небходимо в Chart.yaml дописать dependencies:
+```
+- name: redis
+  version: "14.8.7"
+  repository: https://charts.bitnami.com/bitnami
+```
+А также для простоты в values переопределить некторый параметраы:
+```
+redis:
+  architecture: standalone
+  auth:
+    enabled: false
+  fullnameOverride: "redis-cart"
+```
+а также параметризировать redis url для cartservice: `cartRedis: redis-cart-headless:6379
+
+
+
