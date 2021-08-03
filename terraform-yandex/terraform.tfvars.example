@@ -1,3 +1,4 @@
+
 # yc iam create-token (ya cli)
 ya_api_token = "some_token"
 # yc resource-manager cloud list ya cli)
