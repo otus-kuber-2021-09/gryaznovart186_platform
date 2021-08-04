@@ -1,0 +1,7 @@
+redis:
+  architecture: standalone
+  auth:
+    enabled: false
+  fullnameOverride: "redis-cart"
+
+cartRedis: redis-cart-headless:6379

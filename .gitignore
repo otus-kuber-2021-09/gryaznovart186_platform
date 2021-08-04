@@ -1,2 +1,6 @@
 microservices-demo/
 otus-platform-tests/
+terraform-yandex/terraform.tfvars
+.terraform
+.terraform.lock.hcl
+*.tfstate*
