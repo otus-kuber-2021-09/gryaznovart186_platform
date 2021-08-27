@@ -375,3 +375,30 @@ redis:
 <details>
 <summary>HW 9 monitoring</summary>
 </details>
+
+<details>
+<summary>HW 10 Logging</summary>
+kubectl label $(kubectl get nodes -o name | grep cl1chjdee6t58t3caeu9 | xargs) kubernetes.io/role=infra
+
+kubectl create ns microservices-demo
+kubectl apply -f https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-02/Logging/microservices-demo-without-resources.yaml -n microservices-demo
+```
+helm repo add fluent https://fluent.github.io/helm-charts
+helm repo add elastic https://helm.elastic.com
+helm repo add grafana https://grafana.github.io/helm-charts
+```
+```
+helm upgrade --install fluent-bit stable/fluent-bit --namespace observability --create-namespace -f fluentbit.values.yaml
+```
+```
+helm upgrade --install elasticsearch elastic/elasticsearch --namespace observability --create-namespace -f elasticsearch.values.yaml
+```
+```
+helm upgrade --install  prometheus-operator prometheus-community/kube-prometheus-stack --namespace observability --create-namespace -f prometheus-operator.values.yaml
+```
+helm upgrade --install elasticsearch-exporter prometheus-community/prometheus-elasticsearch-exporter --set es.uri=http://elasticsearch-master:9200 --set serviceMonitor.enabled=true --namespace=observability
+
+helm upgrade --install loki --namespace=observability
+helm upgrade --install promtail grafana/promtail --set "loki.serviceName=loki" --namespace=observability
+
+</details>

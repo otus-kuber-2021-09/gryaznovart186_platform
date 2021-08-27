@@ -1,0 +1,11 @@
+tolerations:
+  - key: node-role
+    operator: Equal
+    value: infra
+    effect: NoSchedule
+
+nodeSelector:
+  kubernetes.io/role: infra
+
+persistence:
+  enabled: false
