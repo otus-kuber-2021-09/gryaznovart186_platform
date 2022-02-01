@@ -402,3 +402,8 @@ helm upgrade --install loki --namespace=observability
 helm upgrade --install promtail grafana/promtail --set "loki.serviceName=loki" --namespace=observability
 
 </details>
+
+
+kubectl apply -f https://raw.githubusercontent.com/fluxcd/helmoperator/main/deploy/flux-helm-release-crd.yaml
+kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/1.4.2/deploy/crds.yaml
+https://github.com/express42/otus-platform-snippets/blob/master/Module-02/GitOps/flux.values.yaml
